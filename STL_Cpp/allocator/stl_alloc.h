@@ -82,3 +82,59 @@
 
 __STL_BEGIN_NAMESPACE
 
+#if defined(__sgi) && !defined(__GNUC__) && (_MIPS_SIM != _MIPS_SIM_ABI32)
+#pragma set woff 1174
+#endif
+
+//Malloc-based allocator. Typically slower than default alloc below.
+//Typically thread-safe and more storage efficient.
+
+#ifdef __STL_STATIC_TEMPLATE_MEMBER_BUG
+#   ifdef __DECLARE_GLOBALS_HERE
+        void(* __malloc_alloc_oom_handler)() = 0;
+        //g++ 2.7.2 does not handle static template date members.
+#else
+    extern void (* __malloc_alloc_oom_handler)();
+#   endif 
+#endif
+
+// SGI STL 1 Stage allocator
+
+template <int __inst>
+class __malloc_alloc_template {
+
+private:
+
+    // Handle "memory not enough" issue
+
+    static void* _S_oom_malloc(size_t);
+    static void* _S_oom_realloc(void*, size_t);
+
+#ifndef __STL_STATIC_TEMPLATE_MEMBER_BUG
+    static void (* __malloc_alloc_oom_handler)();
+#endif
+
+public:
+
+    //1 Stage allocator directly invokes malloc()
+    static void* allocate(size_t __n) {// size_t means sizeof(obj)
+        void* __result = malloc(__n);
+        if(0 == __result)   __result = _S_oom_malloc(__n);
+        return __result;
+    }
+
+    //1 Stage allocator directly invokes free()
+    static void deallocate(void* __p, size_t /* __n */) {
+        free(__p);
+    }
+
+    static void* reallocate(void* __p, size_t /* old_sz */, size_t __new_sz) {
+        void* __result = realloc(__p, __new_sz);
+        if(0 == __result)   __result = _S_oom_realloc(__p, __new_sz);
+        return __result;
+    }
+
+    
+
+    
+}
