@@ -58,4 +58,8 @@ Raw ptr is actually a data struct constructed by memory address and meta data.
     - as for `struct`, if final member is dynamic sized type, metadata is dynamic sized type.
     - as for `str`, metadata is byte-length, metadata type is `usize`.
 
+    - as for `slice`, metadata is the number of  element, datatype is `usize`.
+    - as for `trait`, such as `dyn Sometrait`, metadata type is [DynMetadata]
 
+
+Raw ptrs which have the same metadata type could cast into each other casually.
