@@ -1,5 +1,12 @@
 # Standard Library of Rust
 
+## Prerequisites
+
+Before reading the std in rust, You should prejustify `Rust Nomicron` to dive into `unsafe rust`.
+
+There is my [Notes](./NOMICRON.md).
+
+
 ## `mem` module
 
  **Variable in memory's perspective**
