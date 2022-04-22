@@ -119,3 +119,37 @@ size_of::<Option<&T>>() == size_of::<&T>() // None == Null, that's inefficient
 
 - `repr(u*), repr(i*)`
     - use for non-section `enum`
+    - unavailable for `struct`
+    ```rust
+    enum MyOption<T> {
+        Some(T),
+        None,
+    }
+
+    // FFi version
+    /// use `repr(u*)` could prevent Nullptr Optimization.
+    #[repr(u8)]
+    enum MyReprOption<T> {
+        Some(T),
+        None,
+    }
+    ```
+
+- `repr(packed)`
+    - enforce Rustc to eliminateany paddles. align into 1 byte.
+    - `repr(packed)` is unsafe.
+
+- `repr(align(n))`: n is powers of 2.
+    - enforce type align at least based on n. it is a modified version of `repr(C)` and `repr(Rust)` and not compatible with `repr(packed)`.
+
+## Ownership and lifetime
+
+**Reference**
+
+- alias
+    - `fn compute(input: &u32, output: &mut u32)`, like this, we would know input and output would never be alia of each other because of ownership system.
+    - in Rust, `&mut` could not be allowed to own alias.
+
+**Lifetime**
+
+
