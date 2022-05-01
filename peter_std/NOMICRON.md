@@ -151,5 +151,5 @@ size_of::<Option<&T>>() == size_of::<&T>() // None == Null, that's inefficient
     - in Rust, `&mut` could not be allowed to own alias.
 
 **Lifetime**
-- alias: bound for lifetime.
-- `&mut` and `&` could not exist in mean time.
+
+
