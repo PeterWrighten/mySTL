@@ -166,5 +166,6 @@ rust
     
     - for<'a> means 'as for any 'a lifetime bound'
 - inheritance, subtyping and polymorphism
-    -
+    - 
+    - 
 
