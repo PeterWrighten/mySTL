@@ -169,4 +169,7 @@ rust
     - covariant: `F<Sub> -> F<Super>`
     - contravariant `F<Super> -> F<Sub>`
     - invariant
+- Instance
+    - covariant: `&'a T`
+    
 
