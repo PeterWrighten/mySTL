@@ -166,5 +166,10 @@ rust
     
     - for<'a> means 'as for any 'a lifetime bound'
 - inheritance, subtyping and polymorphism
-    -
+    - covariant: `F<Sub> -> F<Super>`
+    - contravariant `F<Super> -> F<Sub>`
+    - invariant
+- Instance
+    - covariant: `&'a T`
+    
 
