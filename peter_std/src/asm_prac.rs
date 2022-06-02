@@ -30,19 +30,19 @@ fn main() {
     }
     println!("{}", r);
 
-    let mut c: usize = 4;
-    let d: usize = 4;
-    let e: usize = 4;
+    let mut c: u64 = 4;
+    let d: u64 = 4;
+    let e: u64 = 4;
     unsafe {
         asm!(
             "add {0}, {1}",
             "add {0}, {2}",
-            inlateout(reg) c,
+            inlateout(reg) c, // in optimized cases
             in(reg) e,
             in(reg) d,
         );
     }
-    println!("{}", c);
+    println!("c: {}, d: {}, e: {}", c, d, e);
 }
 
 
