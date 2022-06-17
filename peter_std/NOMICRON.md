@@ -154,16 +154,14 @@ size_of::<Option<&T>>() == size_of::<&T>() // None == Null, that's inefficient
 - T: 'static and &'static T
 - HRTBs(Higher-Rank Trait Bounds)
     - in case to bound function pointer:
-    
-rust
+```rust
     impl<F> Closure<F> 
         where for<'a> F: Fn(&'a (u8, u16)) -> &'a u8,
-    
+```    
     or like the following:
-    
-rust
+```rust
     where F: for<'a> Fn(&'a (u8, u16)) -> &'a u8,
-    
+```
     - for<'a> means 'as for any 'a lifetime bound'
 - inheritance, subtyping and polymorphism
     - covariant: `F<Sub> -> F<Super>`
@@ -171,5 +169,10 @@ rust
     - invariant
 - Instance
     - covariant: `&'a T`
-    
+- abolish check
+    - `#![feature(dropck_eyepatch)]`, `#[may_dangle]`
+
+**Phantom data**
+
+
 
