@@ -174,5 +174,13 @@ size_of::<Option<&T>>() == size_of::<&T>() // None == Null, that's inefficient
 
 **Phantom data**
 
+- In order to mark for compiler to infer lifetime.
+    - `rustc` is conservative, it would not infer uninitialized type implicitly.
+
+**Split borrow checker**
+
+- for `slice`: `slice::split_at_mut(mid: usize)`, `slice::from_raw_parts_mut(data: *mut T, len: usize)`
+
+
 
 
