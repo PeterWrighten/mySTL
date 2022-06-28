@@ -1,4 +1,4 @@
-#![feature(ptr_metadata)]
+
 use std::slice::from_raw_parts_mut;
 
 // assume there is a slice
