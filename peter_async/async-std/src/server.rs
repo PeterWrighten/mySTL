@@ -18,17 +18,6 @@ async fn accept_loop(addr: impl ToSocketAddrs) -> Result<()> {
     Ok(())
 }
 
-fn spawn_and_log_error<F>(fut: F) -> task::JoinHandle<()> 
-where
-    F: Future<Output = Result<()>> + Send + 'static,
-{
-    task::spawn(async move {
-        if let Err(e) = fut.await {
-            eprintln!("{}", e)
-        }
-    })
-}
-
 async fn run() -> Result<()> {
     let fut = accept_loop("localhost:5659");
     task::block_on(fut)
@@ -57,3 +46,15 @@ async fn connect_loop(stream: TcpStream) -> Result<()> {
     }
     Ok(())
 }
+
+// Handle errors: log them and continue serving them
+fn spawn_and_log_error<F>(fut: F) -> task::JoinHandle<()> 
+    where
+        F: Future<Output = Result<()>> + Send + 'static,
+    {
+        task::spawn(async move {
+            if let Err(e) = fut.await {
+                eprintln!("{}", e)
+            }
+        })
+    }
