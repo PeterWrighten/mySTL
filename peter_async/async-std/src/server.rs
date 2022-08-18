@@ -10,6 +10,9 @@ use futures::sink::SinkExt;
 use std::sync::Arc;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
+type Sender<T> = mpsc::UnboundedSender<T>;
+type Receiver<T> = mpsc::UnboundedReceiver<T>;
+
 
 async fn accept_loop(addr: impl ToSocketAddrs) -> Result<()> {
     let listener = TcpListener::bind(addr).await?;
