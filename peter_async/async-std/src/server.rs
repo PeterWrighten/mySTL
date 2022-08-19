@@ -7,11 +7,66 @@ use async_std::{
 
 use futures::channel::mpsc;
 use futures::sink::SinkExt;
-use std::sync::Arc;
+use std::{sync::Arc, hash::Hash};
+use std::collections::hash_map::{Entry, HashMap};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
 type Sender<T> = mpsc::UnboundedSender<T>;
 type Receiver<T> = mpsc::UnboundedReceiver<T>;
+
+
+#[derive(Debug)]
+enum Event {
+    NewPeer {
+        name: String,
+        stream: Arc<TcpStream>,
+    },
+    Message {
+        from: String,
+        to: Vec<String>,
+        msg: String,
+    },
+}
+
+async fn broker_loop(mut events: Receiver<Event>) -> Result<()> {
+    let mut peers: HashMap<String, Sender<String>> = HashMap::new();
+
+    while let Some(event) = events.next().await {
+        match event {
+            Event::Message{ from, to, msg } => {
+                for addr in to {
+                    if let Some(peer) = peers.get_mut(&addr) {
+                        let msg = format!("from {}: {}\n", from, msg);
+                        peer.send(msg).await?;
+                    }
+                }
+            }
+
+            Event::NewPeer { name, stream } => {
+                match peers.entry(name) {
+                    Entry::Occupied(..) => (),
+                    Entry::Vacant(entry) => {
+                        let (client_sender, client_receiver) = mpsc::unbounded();
+                        entry.insert(client_sender);
+                        spawn_and_log_error(connection_writer_loop(client_receiver, stream));
+                    }
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+async fn connection_writer_loop(
+    mut messages: Receiver<String>,
+    stream: Arc<TcpStream>,
+) -> Result<()> {
+    let mut stream = &*stream;
+    while let Some(msg) = messages.next().await {
+        stream.write_all(msg.as_bytes()).await?;
+    }
+    Ok(())
+}
 
 
 async fn accept_loop(addr: impl ToSocketAddrs) -> Result<()> {
